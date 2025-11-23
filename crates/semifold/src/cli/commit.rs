@@ -2,7 +2,7 @@ use std::{fmt, path::Path};
 
 use clap::{Parser, ValueEnum};
 use colored::Colorize;
-use inquire::{Autocomplete, Confirm, MultiSelect, Text, autocompletion::Replacement};
+use inquire::{Confirm, MultiSelect, Select, Text};
 
 use rust_i18n::t;
 use semifold_resolver::{changeset, context::Context};
@@ -42,40 +42,6 @@ pub(crate) struct Commit {
     pub level: Option<Level>,
     #[arg(short, long, help = t!("cli.commit.flags.summary"))]
     pub summary: Option<String>,
-}
-
-#[derive(Clone)]
-pub(crate) struct TagAutocomplete {
-    tags: Vec<String>,
-}
-
-impl Autocomplete for TagAutocomplete {
-    fn get_suggestions(&mut self, input: &str) -> Result<Vec<String>, inquire::CustomUserError> {
-        let suggestions = self
-            .tags
-            .iter()
-            .filter(|tag| tag.starts_with(input))
-            .cloned()
-            .collect::<Vec<_>>();
-        Ok(suggestions)
-    }
-
-    fn get_completion(
-        &mut self,
-        input: &str,
-        highlighted_suggestion: Option<String>,
-    ) -> Result<inquire::autocompletion::Replacement, inquire::CustomUserError> {
-        let completion = if let Some(highlighted_suggestion) = highlighted_suggestion {
-            highlighted_suggestion
-        } else {
-            self.tags
-                .iter()
-                .find(|tag| tag.starts_with(input))
-                .cloned()
-                .unwrap_or(input.to_string())
-        };
-        Ok(Replacement::Some(completion))
-    }
 }
 
 fn sanitize_filename(filename: &str) -> String {
@@ -145,11 +111,11 @@ pub(crate) fn run(commit: &Commit, ctx: &Context) -> anyhow::Result<()> {
         break packages;
     };
 
-    let tag = Text::new(&t!("cli.commit.query_tags"))
-        .with_autocomplete(TagAutocomplete {
-            tags: config.tags.keys().cloned().collect::<Vec<_>>(),
-        })
-        .prompt()?;
+    let tag = Select::new(
+        &t!("cli.commit.query_tags"),
+        config.tags.keys().cloned().collect::<Vec<_>>(),
+    )
+    .prompt()?;
 
     let mut changeset = changeset::Changeset::new(name.clone(), changeset_root);
     let level_variants = Level::value_variants().iter().rev();
