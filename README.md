@@ -65,6 +65,7 @@ Languages supported:
 - [x] Rust
 - [x] Node.js
 - [x] Python
+- [x] C++
 - [ ] Go
 - [ ] Java
 - [ ] Kotlin

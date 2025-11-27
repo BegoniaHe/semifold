@@ -18,6 +18,7 @@ pub(crate) enum ResolverType {
     Rust,
     Nodejs,
     Python,
+    Cpp,
 }
 
 impl From<ResolverType> for resolver::ResolverType {
@@ -26,6 +27,7 @@ impl From<ResolverType> for resolver::ResolverType {
             ResolverType::Rust => resolver::ResolverType::Rust,
             ResolverType::Nodejs => resolver::ResolverType::Nodejs,
             ResolverType::Python => resolver::ResolverType::Python,
+            ResolverType::Cpp => resolver::ResolverType::Cpp,
         }
     }
 }
@@ -36,6 +38,7 @@ impl std::fmt::Display for ResolverType {
             ResolverType::Rust => write!(f, "Rust"),
             ResolverType::Nodejs => write!(f, "Nodejs"),
             ResolverType::Python => write!(f, "Python"),
+            ResolverType::Cpp => write!(f, "Cpp"),
         }
     }
 }
@@ -163,7 +166,19 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                     },
                     prepublish: vec![],
                     publish: vec![],
-                    post_version: vec![]
+                    post_version: vec![],
+                },
+            ),
+            ResolverType::Cpp => (
+                ResolverTypeEnum::Cpp,
+                ResolverConfig {
+                    pre_check: PreCheckConfig {
+                        url: String::new(),
+                        extra_headers: BTreeMap::new(),
+                    },
+                    prepublish: vec![],
+                    publish: vec![],
+                    post_version: vec![],
                 },
             ),
         }
@@ -207,6 +222,19 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                     acc.entry(pkg.name.clone()).or_insert(PackageConfig {
                         path: pkg.path.clone(),
                         resolver: resolver::ResolverType::Python,
+                        version_mode: VersionMode::Semantic,
+                        assets: vec![],
+                    });
+                });
+                Ok::<_, ResolveError>(acc)
+            }
+            ResolverType::Cpp => {
+                let mut resolver = resolver::cpp::CppResolver;
+                let packages = resolver.resolve_all(&target_dir)?;
+                packages.into_iter().for_each(|pkg| {
+                    acc.entry(pkg.name.clone()).or_insert(PackageConfig {
+                        path: pkg.path.clone(),
+                        resolver: resolver::ResolverType::Cpp,
                         version_mode: VersionMode::Semantic,
                         assets: vec![],
                     });
