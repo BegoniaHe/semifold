@@ -17,6 +17,7 @@
     "pathspec",
     "pipx",
     "postpublish",
+    "prek",
     "pyproject",
     "reqwest",
     "revwalk",

@@ -26,38 +26,6 @@ Nowadays, cross-language monorepos are becoming more and more common. For exampl
 | **One-command publishing**          | Publish multiple packages reliably                             |
 | **CI-friendly design**              | `smif ci` gives a stable pipeline for GitHub Actions or others |
 
-## 🚀 Quick Start
-
-### 1. Install
-
-```bash
-cargo install semifold
-```
-
-### 2. Initialize config
-
-```bash
-smif init
-```
-
-### 3. Add a change
-
-```bash
-smif commit
-```
-
-### 4. Bump versions
-
-```bash
-smif version
-```
-
-### 5. Publish packages
-
-```bash
-smif publish
-```
-
 ## 📌 Status
 
 Languages supported:
@@ -77,6 +45,10 @@ Semifold was inspired by the great work from the following projects:
 [Changesets](https://github.com/changesets/changesets) — a simple and elegant changeset-based versioning workflow, mainly focused on JavaScript and npm monorepos.
 
 [Covector](https://github.com/jbolda/covector/) — a flexible multi-target release manager designed to support more complex ecosystems.
+
+## 🤝 Contributing
+
+Contributions are very welcome! Please read the [contributing guidelines](CONTRIBUTING.md) to get started.
 
 ## 📄 License
 
