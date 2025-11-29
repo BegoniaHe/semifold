@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+  - repo: local
+    hooks:
+      - id: cargo-format
+        name: cargo format
+        entry: cargo fmt
+        language: system
+        types: [text]
+        files: "\\.(rs)$"
