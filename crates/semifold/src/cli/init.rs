@@ -12,8 +12,10 @@ use semifold_resolver::{
     error::ResolveError,
     resolver::{self, Resolver, ResolverType as ResolverTypeEnum},
 };
+use serde::Serialize;
 
-#[derive(clap::ValueEnum, Clone, Debug)]
+#[derive(clap::ValueEnum, Clone, Debug, Serialize)]
+#[serde(rename_all = "snake_case")]
 pub(crate) enum ResolverType {
     Rust,
     Nodejs,
@@ -306,11 +308,19 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
 
         std::fs::write(
             target_dir.join(".github/workflows/semifold-ci.yaml"),
-            minijinja::render!(&ci_str, base_branch => &base_branch),
+            minijinja::render!(
+                &ci_str,
+                base_branch => &base_branch,
+                resolvers => &resolvers
+            ),
         )?;
         std::fs::write(
             target_dir.join(".github/workflows/semifold-status.yaml"),
-            minijinja::render!(&status_ci_str, base_branch => &base_branch),
+            minijinja::render!(
+                &status_ci_str,
+                base_branch => &base_branch,
+                resolvers => &resolvers
+            ),
         )?;
     }
 

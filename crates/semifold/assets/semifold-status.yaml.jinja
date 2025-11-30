@@ -1,8 +1,7 @@
 name: Semifold Status
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-    branches: [{{ base_branch }}]
+  pull_request:
+    branches: [main]
 
 env:
   CLICOLOR_FORCE: 1
@@ -19,15 +18,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        with:
-          ref: {% raw %}${{ github.event.pull_request.head.sha }}{% endraw %}
-      - name: Cache rust artifacts
-        uses: Swatinem/rust-cache@v2
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Install Semifold
-        run: cargo install semifold
+      - name: Setup Semifold
+        uses: noctisynth/setup-semifold@main
       - name: Semifold Status
-        run: semifold status --debug
+        run: semifold status
         env:
           GITHUB_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
