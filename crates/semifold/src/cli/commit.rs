@@ -98,12 +98,13 @@ pub(crate) fn run(commit: &Commit, ctx: &Context) -> anyhow::Result<()> {
 
     log::debug!("Change name: {name}");
 
+    let all_packages = config.packages.keys().cloned().collect::<Vec<_>>();
     let mut packages = loop {
-        let packages = MultiSelect::new(
-            &t!("cli.commit.query_packages"),
-            config.packages.keys().cloned().collect::<Vec<_>>(),
-        )
-        .prompt()?;
+        if all_packages.len() == 1 {
+            break all_packages;
+        }
+        let packages =
+            MultiSelect::new(&t!("cli.commit.query_packages"), all_packages.clone()).prompt()?;
         if packages.is_empty() {
             log::warn!("{}", t!("cli.commit.warn_no_packages"));
             continue;
