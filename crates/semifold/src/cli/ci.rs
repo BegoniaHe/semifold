@@ -49,7 +49,7 @@ pub(crate) async fn run(_ci: &CI, ctx: &Context) -> anyhow::Result<()> {
     };
 
     if !ctx.is_ci() {
-        return Err(anyhow::anyhow!("Not running in CI environment"));
+        return Err(anyhow::anyhow!(t!("cli.ci.not_ci_environment")));
     }
 
     let ref_name = env::var("GITHUB_REF_NAME").context("GITHUB_REF_NAME is not set")?;
@@ -58,28 +58,28 @@ pub(crate) async fn run(_ci: &CI, ctx: &Context) -> anyhow::Result<()> {
     log::debug!("GITHUB_REF_NAME: {}", &ref_name);
 
     let Some(repo) = ctx.git_repo.as_ref() else {
-        return Err(anyhow::anyhow!("Git repository is not initialized"));
+        return Err(anyhow::anyhow!(t!("cli.ci.git_repo_not_initialized")));
     };
     let mut git_config = repo.config()?;
     git_config.set_str("user.name", "github-actions[bot]")?;
     git_config.set_str("user.email", "github-actions[bot]@users.noreply.github.com")?;
 
-    let (owner, repo_name) = github_repo.split_once('/').ok_or(anyhow::anyhow!(
-        "GITHUB_REPOSITORY is not in the format owner/repo"
-    ))?;
+    let (owner, repo_name) = github_repo
+        .split_once('/')
+        .ok_or(anyhow::anyhow!(t!("cli.ci.github_repo_invalid_format")))?;
 
     let github_token = env::var("GITHUB_TOKEN").context("GITHUB_TOKEN is not set")?;
     let octocrab = Octocrab::builder().personal_token(&*github_token).build()?;
 
     let is_base_branch = ref_name == config.branches.base;
     if !is_base_branch {
-        log::warn!("Not a push to base branch, skip versioning and publishing.");
+        log::warn!("{}", t!("cli.ci.not_base_branch"));
         return Ok(());
     }
 
     let changesets = resolver::get_changesets(ctx)?;
     if changesets.is_empty() {
-        log::info!("No changesets found, will publish the current version.");
+        log::info!("{}", t!("cli.ci.no_changesets_publish"));
         return publish::publish(ctx, true).await;
     }
 
@@ -137,7 +137,7 @@ pub(crate) async fn run(_ci: &CI, ctx: &Context) -> anyhow::Result<()> {
     );
 
     if existing_prs.is_empty() {
-        log::info!("No existing PR found, create a new one.");
+        log::info!("{}", t!("cli.ci.no_existing_pr"));
         pulls
             .create(pr_title, release_branch, base_branch)
             .body(pr_body)
@@ -145,7 +145,7 @@ pub(crate) async fn run(_ci: &CI, ctx: &Context) -> anyhow::Result<()> {
             .await?;
     } else {
         let pr = existing_prs.first().unwrap();
-        log::info!("Existing PR #{} found, skip creating a new one.", pr.number);
+        log::info!("{}", t!("cli.ci.existing_pr_found", number = pr.number));
         pulls
             .update(pr.number)
             .title(pr_title)

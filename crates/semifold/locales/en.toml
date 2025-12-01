@@ -81,3 +81,12 @@ pre_check = "Pre-check passed for %{package} %{version}, skipping publish"
 [cli.publish.flags]
 github_release = "Create GitHub releases for published packages, only available in CI environment"
 allow_dirty = "Allow publishing packages with dirty Git working tree"
+
+[cli.ci]
+not_ci_environment = "Not running in CI environment"
+git_repo_not_initialized = "Git repository is not initialized"
+github_repo_invalid_format = "GITHUB_REPOSITORY is not in the format owner/repo"
+not_base_branch = "Not a push to base branch, skip versioning and publishing."
+no_changesets_publish = "No changesets found, will publish the current version."
+no_existing_pr = "No existing PR found, create a new one."
+existing_pr_found = "Existing PR #%{number} found, skip creating a new one."
