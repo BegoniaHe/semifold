@@ -1890,6 +1890,7 @@ dependencies = [
 name = "semifold-resolver"
 version = "0.2.2"
 dependencies = [
+ "clap",
  "git2",
  "glob",
  "log",
