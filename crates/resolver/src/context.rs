@@ -11,6 +11,7 @@ use crate::{config, error, resolver};
 pub struct RepoInfo {
     pub owner: String,
     pub repo_name: String,
+    pub base_url: String,
 }
 
 #[derive(Default)]
@@ -45,6 +46,8 @@ impl Context {
             repo.split_once('/').map(|(owner, repo_name)| RepoInfo {
                 owner: owner.to_string(),
                 repo_name: repo_name.to_string(),
+                base_url: std::env::var("GITHUB_SERVER_URL")
+                    .unwrap_or_else(|_| "https://github.com".to_string()),
             })
         });
         let git_repo = if let Some(repo_root) = &repo_root {
