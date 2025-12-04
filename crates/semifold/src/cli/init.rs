@@ -10,40 +10,8 @@ use semifold_resolver::{
     },
     context,
     error::ResolveError,
-    resolver::{self, Resolver, ResolverType as ResolverTypeEnum},
+    resolver::{self, Resolver, ResolverType},
 };
-use serde::Serialize;
-
-#[derive(clap::ValueEnum, Clone, Debug, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub(crate) enum ResolverType {
-    Rust,
-    Nodejs,
-    Python,
-    Cpp,
-}
-
-impl From<ResolverType> for resolver::ResolverType {
-    fn from(value: ResolverType) -> Self {
-        match value {
-            ResolverType::Rust => resolver::ResolverType::Rust,
-            ResolverType::Nodejs => resolver::ResolverType::Nodejs,
-            ResolverType::Python => resolver::ResolverType::Python,
-            ResolverType::Cpp => resolver::ResolverType::Cpp,
-        }
-    }
-}
-
-impl std::fmt::Display for ResolverType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ResolverType::Rust => write!(f, "Rust"),
-            ResolverType::Nodejs => write!(f, "Nodejs"),
-            ResolverType::Python => write!(f, "Python"),
-            ResolverType::Cpp => write!(f, "Cpp"),
-        }
-    }
-}
 
 #[derive(rust_embed::Embed)]
 #[folder = "assets"]
@@ -105,7 +73,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
     let resolvers_config = BTreeMap::from_iter(resolvers.iter().map(|r| {
         match r {
             ResolverType::Rust => (
-                ResolverTypeEnum::Rust,
+                ResolverType::Rust,
                 ResolverConfig {
                     pre_check: PreCheckConfig {
                         url:
@@ -135,7 +103,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                 },
             ),
             ResolverType::Nodejs => (
-                ResolverTypeEnum::Nodejs,
+                ResolverType::Nodejs,
                 ResolverConfig {
                     pre_check: PreCheckConfig {
                         url:
@@ -156,7 +124,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                 },
             ),
             ResolverType::Python => (
-                ResolverTypeEnum::Python,
+                ResolverType::Python,
                 ResolverConfig {
                     pre_check: PreCheckConfig {
                         url:
@@ -172,7 +140,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                 },
             ),
             ResolverType::Cpp => (
-                ResolverTypeEnum::Cpp,
+                ResolverType::Cpp,
                 ResolverConfig {
                     pre_check: PreCheckConfig {
                         url: String::new(),

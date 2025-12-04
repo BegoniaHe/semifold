@@ -162,18 +162,13 @@ impl Resolver for RustResolver {
             })?;
         package_table["version"] = toml_edit::value(&bumped_version);
 
-        let deps_table =
-            toml_doc["dependencies"]
-                .as_table_mut()
-                .ok_or(ResolveError::ParseError {
-                    path: cargo_toml_path.clone(),
-                    reason: "dependencies table not found".to_string(),
-                })?;
-        for (name, bumped_version) in ctx.version_bumps.borrow().iter() {
-            if let Some(dep) = deps_table.get_mut(name)
-                && dep["version"].is_str()
-            {
-                dep["version"] = toml_edit::value(bumped_version.to_string());
+        if let Some(deps_table) = toml_doc["dependencies"].as_table_mut() {
+            for (name, bumped_version) in ctx.version_bumps.borrow().iter() {
+                if let Some(dep) = deps_table.get_mut(name)
+                    && dep["version"].is_str()
+                {
+                    dep["version"] = toml_edit::value(bumped_version.to_string());
+                }
             }
         }
 

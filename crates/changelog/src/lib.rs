@@ -19,8 +19,8 @@ pub fn format_line(
         && let Some(commit_hash) = commit_hash
     {
         let commit_url = format!(
-            "https://github.com/{}/{}/commit/{}",
-            repo_info.owner, repo_info.repo_name, commit_hash
+            "{}/{}/{}/commit/{}",
+            repo_info.base_url, repo_info.owner, repo_info.repo_name, commit_hash
         );
         line.push_str(&format!("[`{}`]({}): ", &commit_hash[..7], commit_url));
     }

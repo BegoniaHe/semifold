@@ -53,8 +53,8 @@ fn bump_prerelease(version: &mut Version, tag: &str) -> Result<(), ResolveError>
         version.pre = semver::Prerelease::new(&format!("{tag}.0"))?;
     } else {
         let pre = version.pre.clone();
-        let mut parts = pre.as_str().split('.').collect::<Vec<_>>();
-        if let Some(idx) = parts.iter().position(|&s| s == tag) {
+        let mut parts: Vec<String> = pre.as_str().split('.').map(String::from).collect();
+        if let Some(idx) = parts.iter().position(|s| s == tag) {
             if let Some(pre_patch) = parts.get(idx + 1) {
                 let pre_patch =
                     pre_patch
@@ -63,12 +63,12 @@ fn bump_prerelease(version: &mut Version, tag: &str) -> Result<(), ResolveError>
                             version: version.to_string(),
                             reason: e.to_string(),
                         })?;
-                parts[idx + 1] = format!("{}", pre_patch + 1).leak();
+                parts[idx + 1] = format!("{}", pre_patch + 1);
             } else {
-                parts.insert(idx + 1, "1");
+                parts.insert(idx + 1, "1".to_string());
             }
         } else {
-            parts = vec![tag, "0"];
+            parts = vec![tag.to_string(), "0".to_string()];
         }
         version.pre = semver::Prerelease::new(&parts.join("."))?;
     }
