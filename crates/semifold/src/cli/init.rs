@@ -151,6 +151,18 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                     post_version: vec![],
                 },
             ),
+            ResolverType::Go => (
+                ResolverType::Go,
+                ResolverConfig {
+                    pre_check: PreCheckConfig {
+                        url: String::new(),
+                        extra_headers: BTreeMap::new(),
+                    },
+                    prepublish: vec![],
+                    publish: vec![],
+                    post_version: vec![],
+                },
+            ),
         }
     }));
 
@@ -205,6 +217,19 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
                     acc.entry(pkg.name.clone()).or_insert(PackageConfig {
                         path: pkg.path.clone(),
                         resolver: resolver::ResolverType::Cpp,
+                        version_mode: VersionMode::Semantic,
+                        assets: vec![],
+                    });
+                });
+                Ok::<_, ResolveError>(acc)
+            }
+            ResolverType::Go => {
+                let mut resolver = resolver::go::GoResolver;
+                let packages = resolver.resolve_all(&target_dir)?;
+                packages.into_iter().for_each(|pkg| {
+                    acc.entry(pkg.name.clone()).or_insert(PackageConfig {
+                        path: pkg.path.clone(),
+                        resolver: resolver::ResolverType::Go,
                         version_mode: VersionMode::Semantic,
                         assets: vec![],
                     });

@@ -11,6 +11,7 @@ use core::fmt;
 use std::path::{Path, PathBuf};
 
 pub mod cpp;
+pub mod go;
 pub mod nodejs;
 pub mod python;
 pub mod rust;
@@ -31,6 +32,7 @@ pub enum ResolverType {
     Nodejs,
     Python,
     Cpp,
+    Go,
 }
 
 impl fmt::Display for ResolverType {
@@ -40,6 +42,7 @@ impl fmt::Display for ResolverType {
             ResolverType::Nodejs => write!(f, "nodejs"),
             ResolverType::Python => write!(f, "python"),
             ResolverType::Cpp => write!(f, "cpp"),
+            ResolverType::Go => write!(f, "go"),
         }
     }
 }

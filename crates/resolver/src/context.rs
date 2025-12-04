@@ -108,6 +108,7 @@ impl Context {
             resolver::ResolverType::Nodejs => Box::new(resolver::nodejs::NodejsResolver),
             resolver::ResolverType::Python => Box::new(resolver::python::PythonResolver),
             resolver::ResolverType::Cpp => Box::new(resolver::cpp::CppResolver),
+            resolver::ResolverType::Go => Box::new(resolver::go::GoResolver),
         }
     }
 
