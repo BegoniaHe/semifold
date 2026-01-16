@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.3.1
+
+### Bug Fixes
+
+- [`8a26838`](https://github.com/noctisynth/semifold/commit/8a2683871626a57a4e3b80788c8f151d8fde9a76): Fix rust private flag.
+- [`306d737`](https://github.com/noctisynth/semifold/commit/306d7375fb2da7adabf9ad4b268e119674732c17): Fix resolver display names, use camel case instead.
+
+## v0.3.0
+
+### New Features
+
+- [`d8959d0`](https://github.com/noctisynth/semifold/commit/d8959d02b980e2407fa95009e8afbf4c4375b1c0): 1. Add base_url field to RepoInfo struct 2. Read GITHUB_SERVER_URL env var with fallback to <https://github.com> 3. Use dynamic URL in changelog commit links ([#58](https://github.com/noctisynth/semifold/pull/58) by @BegoniaHe)
+
+### Bug Fixes
+
+- [`d8959d0`](https://github.com/noctisynth/semifold/commit/d8959d02b980e2407fa95009e8afbf4c4375b1c0): Convert `parts` from Vec<&str> to Vec<String> in bump_prerelease function ([#58](https://github.com/noctisynth/semifold/pull/58) by @BegoniaHe)
+- [`d8959d0`](https://github.com/noctisynth/semifold/commit/d8959d02b980e2407fa95009e8afbf4c4375b1c0): Rust projects may not have a [dependencies] section (e.g., pure library crates or those with only dev-dependencies). This change makes the dependencies table optional instead of requiring it. ([#58](https://github.com/noctisynth/semifold/pull/58) by @BegoniaHe)
+
+### Refactors
+
+- [`d8959d0`](https://github.com/noctisynth/semifold/commit/d8959d02b980e2407fa95009e8afbf4c4375b1c0): 1. Add optional clap dependency to semifold-resolver 2. Conditionally derive ValueEnum on ResolverType 3. Remove duplicate ResolverType definition in init.rs ([#58](https://github.com/noctisynth/semifold/pull/58) by @BegoniaHe)
+
 ## v0.2.2
 
 ### New Features

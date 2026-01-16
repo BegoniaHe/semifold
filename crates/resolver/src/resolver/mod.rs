@@ -36,10 +36,10 @@ pub enum ResolverType {
 impl fmt::Display for ResolverType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ResolverType::Rust => write!(f, "rust"),
-            ResolverType::Nodejs => write!(f, "nodejs"),
-            ResolverType::Python => write!(f, "python"),
-            ResolverType::Cpp => write!(f, "cpp"),
+            ResolverType::Rust => write!(f, "Rust"),
+            ResolverType::Nodejs => write!(f, "Nodejs"),
+            ResolverType::Python => write!(f, "Python"),
+            ResolverType::Cpp => write!(f, "Cpp"),
         }
     }
 }

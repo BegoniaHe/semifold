@@ -1,6 +1,6 @@
 use std::{collections::BTreeMap, path::PathBuf};
 
-use clap::{Args, ValueEnum};
+use clap::{Parser, ValueEnum};
 use inquire::{Confirm, MultiSelect, Select, Text};
 use rust_i18n::t;
 use semifold_resolver::{
@@ -17,7 +17,7 @@ use semifold_resolver::{
 #[folder = "assets"]
 pub(crate) struct CIAsset;
 
-#[derive(Debug, Args)]
+#[derive(Debug, Parser)]
 pub(crate) struct Init {
     #[arg(short, long, default_value = ".changes", help = t!("cli.init.flags.target"))]
     pub target: Option<PathBuf>,
@@ -265,8 +265,9 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
     }
     config::save_config(&target.join("config.toml"), &config)?;
     if write_ci {
-        if !target_dir.join(".github").exists() {
-            std::fs::create_dir_all(target_dir.join(".github"))?;
+        let workflow_dir = target_dir.join(".github").join("workflows");
+        if !workflow_dir.exists() {
+            std::fs::create_dir_all(&workflow_dir)?;
         }
         let ci_asset = CIAsset::get("semifold-ci.yaml.jinja").unwrap();
         let status_ci_asset = CIAsset::get("semifold-status.yaml.jinja").unwrap();
@@ -275,7 +276,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
         let status_ci_str = String::from_utf8_lossy(&status_ci_asset.data).to_string();
 
         std::fs::write(
-            target_dir.join(".github/workflows/semifold-ci.yaml"),
+            workflow_dir.join("semifold-ci.yaml"),
             minijinja::render!(
                 &ci_str,
                 base_branch => &base_branch,
@@ -283,7 +284,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
             ),
         )?;
         std::fs::write(
-            target_dir.join(".github/workflows/semifold-status.yaml"),
+            workflow_dir.join("semifold-status.yaml"),
             minijinja::render!(
                 &status_ci_str,
                 base_branch => &base_branch,
