@@ -30,4 +30,6 @@ pub enum ResolveError {
     PreReleaseTagInvalid { tag: String, message: String },
     #[error("Semver error: {0}")]
     SemverError(#[from] semver::Error),
+    #[error("Glob pattern invalid: {0}")]
+    GlobPatternError(#[from] glob::PatternError),
 }

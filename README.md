@@ -7,6 +7,8 @@
 
 # Semifold
 
+English | [中文](README.CN.md)
+
 </div>
 
 Next-generation cross-language monorepo version and release management tool.

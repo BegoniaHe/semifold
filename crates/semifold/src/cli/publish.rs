@@ -168,6 +168,9 @@ pub(crate) async fn publish(ctx: &Context, github_release: bool) -> anyhow::Resu
             );
         }
 
+        let assets = ctx.get_assets(package_name)?;
+        log::debug!("Assets: {:?}", assets);
+
         if should_create_github_release {
             let Some(repo_info) = &ctx.repo_info else {
                 return Err(anyhow::anyhow!("Repo info not found"));
@@ -185,7 +188,6 @@ pub(crate) async fn publish(ctx: &Context, github_release: bool) -> anyhow::Resu
                     continue;
                 };
 
-                let assets = ctx.get_assets(package_name)?;
                 for asset in assets {
                     log::info!(
                         "Uploading asset: {} from {}",
@@ -215,10 +217,7 @@ pub(crate) async fn publish(ctx: &Context, github_release: bool) -> anyhow::Resu
                     &package_name.cyan(),
                     &format!("v{}", resolved_package.version).green()
                 );
-                log::warn!(
-                    "Skipped uploading assets: {:?}",
-                    &ctx.get_assets(package_name)
-                );
+                log::warn!("Skipped uploading assets: {:?}", &assets);
             }
         }
     }

@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.2.13
+
+### Bug Fixes
+
+- [`1eb7732`](https://github.com/noctisynth/semifold/commit/1eb7732b230b9c809e292f6ec3324e3eb7dfba34): Ensure all assets filtered by glob patterns are files.
+
+## v0.2.12
+
+### Bug Fixes
+
+- [`df6e2ab`](https://github.com/noctisynth/semifold/commit/df6e2abd48beff959570d9cce997a7a00c829ee9): Always resolve asset files and use full path glob pattern instead.
+
+## v0.2.11
+
+### New Features
+
+- [`fd41853`](https://github.com/noctisynth/semifold/commit/fd41853260fbb5b1e61a41373c24684d2a38e22e): Support search upload assets by glob pattern.
+
 ## v0.2.10
 
 ### Bug Fixes

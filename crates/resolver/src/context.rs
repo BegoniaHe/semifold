@@ -1,9 +1,4 @@
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-    env,
-    path::{Path, PathBuf},
-};
+use std::{cell::RefCell, collections::HashMap, env, path::PathBuf};
 
 use crate::{config, error, resolver};
 
@@ -148,26 +143,40 @@ impl Context {
             .ok_or(error::ResolveError::GitError {
                 message: "Git repository is not initialized".to_string(),
             })?;
-        let assets = if let Some(pkg_cfg) = self.get_package_config(package_name) {
-            pkg_cfg
-                .assets
-                .iter()
-                .map(|p| match p {
-                    config::Asset::Asset(asset_config) => config::AssetConfig {
-                        path: repo_root.join(&asset_config.path),
-                        name: asset_config.name.clone(),
-                    },
-                    config::Asset::String(path) => config::AssetConfig {
-                        path: repo_root.join(path),
-                        name: Path::new(path)
-                            .file_name()
-                            .map(|n| n.to_string_lossy().to_string())
-                            .unwrap_or_else(|| path.clone()),
-                    },
-                })
-                .collect()
-        } else {
-            Vec::new()
+
+        let mut assets = Vec::new();
+        if let Some(pkg_cfg) = self.get_package_config(package_name) {
+            for asset in &pkg_cfg.assets {
+                match asset {
+                    config::Asset::Asset(asset_config) => {
+                        let asset = config::AssetConfig {
+                            path: repo_root.join(&asset_config.path),
+                            name: asset_config.name.clone(),
+                        };
+                        if asset.path.is_file() {
+                            assets.push(asset);
+                        } else {
+                            log::warn!("Asset {:?} is not a file", asset.path);
+                        }
+                    }
+                    config::Asset::String(rel_path) => {
+                        let full_path = repo_root.join(rel_path).to_string_lossy().to_string();
+                        log::debug!("Searching assets by glob: {:?}", full_path);
+                        let asset_paths = glob::glob(&full_path)?.flatten();
+                        let asset_configs = asset_paths
+                            .map(|path| config::AssetConfig {
+                                path: path.clone(),
+                                name: path
+                                    .file_name()
+                                    .map(|n| n.to_string_lossy().to_string())
+                                    .unwrap_or_else(|| path.to_string_lossy().to_string()),
+                            })
+                            .filter(|asset| asset.path.is_file())
+                            .collect::<Vec<_>>();
+                        assets.extend(asset_configs);
+                    }
+                }
+            }
         };
         Ok(assets)
     }
