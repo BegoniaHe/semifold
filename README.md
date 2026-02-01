@@ -17,6 +17,10 @@ Nowadays, cross-language monorepos are becoming more and more common. For exampl
 
 `semifold` (CLI: `smif` | `semifold`) helps teams manage versions, changelogs, and package publishing across large cross-language monorepos with **consistency, automation, and zero pain**. Whether you are building libraries, apps, or services across multiple languages, Semifold keeps your release pipeline clean and predictable.
 
+## 📖 Documentation
+
+For detailed usage instructions, please refer to the [official documentation](https://semifold.noctisynth.org).
+
 ## ✨ Features
 
 | Feature                             | Description                                                    |
