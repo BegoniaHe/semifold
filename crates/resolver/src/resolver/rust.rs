@@ -166,7 +166,7 @@ impl Resolver for RustResolver {
         if let Some(deps_table) = toml_doc["dependencies"].as_table_mut() {
             for (name, bumped_version) in ctx.version_bumps.borrow().iter() {
                 if let Some(dep) = deps_table.get_mut(name)
-                    && dep["version"].is_str()
+                    && dep.get("version").is_some_and(|version| version.is_str())
                 {
                     dep["version"] = toml_edit::value(bumped_version.to_string());
                 }
