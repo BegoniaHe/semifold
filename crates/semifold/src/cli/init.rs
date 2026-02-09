@@ -40,7 +40,9 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
     const AVAILABLE_TARGETS: [&str; 2] = [".changes", ".changesets"];
 
     let mut target_dir = std::env::current_dir()?;
-    if ctx.repo_root.is_some() && ctx.repo_root.as_ref().unwrap() != &target_dir {
+    if let Some(repo_root) = ctx.repo_root.as_ref()
+        && repo_root != &target_dir
+    {
         log::warn!("{}", t!("cli.init.not_repo_root"));
         if !Confirm::new(&t!("cli.init.continue"))
             .with_default(false)
@@ -49,7 +51,7 @@ pub(crate) fn run(init: &Init, ctx: &context::Context) -> anyhow::Result<()> {
             log::warn!("{}", t!("cli.init.aborted"));
             return Ok(());
         }
-        target_dir = ctx.repo_root.as_ref().unwrap().to_path_buf();
+        target_dir = repo_root.to_path_buf();
     }
 
     let target = if let Some(target) = &init.target {

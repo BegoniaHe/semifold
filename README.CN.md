@@ -17,6 +17,10 @@
 
 `semifold`（CLI：`smif` | `semifold`）帮助团队在大型跨语言 monorepo 中管理版本、变更日志和包发布，实现**一致性、自动化和零痛点**。无论您是在多种语言中构建库、应用还是服务，Semifold 都能保持您的发布流程清晰可预测。
 
+## 📖 文档
+
+[官方文档](https://semifold.noctisynth.org)
+
 ## ✨ 特性
 
 | 特性                             | 描述                                                    |
