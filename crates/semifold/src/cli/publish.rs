@@ -24,6 +24,20 @@ pub(crate) struct Publish {
     allow_dirty: bool,
 }
 
+pub(crate) fn is_release_exists_error(errors: &[serde_json::Value]) -> anyhow::Result<bool> {
+    let Some(error) = errors.first() else {
+        return Ok(false);
+    };
+    let error = error
+        .as_object()
+        .ok_or(anyhow::anyhow!("Invalid error format"))?;
+    let Some(code) = error.get("code") else {
+        return Ok(false);
+    };
+    let code = code.as_str().ok_or(anyhow::anyhow!("Invalid error code"))?;
+    Ok(code == "already_exists")
+}
+
 pub(crate) async fn create_github_release(
     ctx: &Context,
     octocrab: &octocrab::Octocrab,
@@ -64,6 +78,10 @@ pub(crate) async fn create_github_release(
         Ok(release) => Ok(Some(release)),
         Err(octocrab::Error::GitHub { source, .. }) => {
             if source.status_code == StatusCode::UNPROCESSABLE_ENTITY {
+                if is_release_exists_error(&source.errors.clone().unwrap_or_default())? {
+                    log::warn!("GitHub release already exists, skip create");
+                    return Ok(None);
+                }
                 log::warn!("Failed to create GitHub release: {:?}", source);
                 Ok(None)
             } else {
